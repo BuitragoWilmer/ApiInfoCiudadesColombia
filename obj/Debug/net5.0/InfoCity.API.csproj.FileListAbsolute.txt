@@ -31,6 +31,5 @@ C:\Users\Brayan\source\repos\InfoCity.API\obj\Debug\net5.0\staticwebassets\msbui
 C:\Users\Brayan\source\repos\InfoCity.API\obj\Debug\net5.0\staticwebassets\msbuild.build.InfoCity.API.props
 C:\Users\Brayan\source\repos\InfoCity.API\obj\Debug\net5.0\staticwebassets\msbuild.buildMultiTargeting.InfoCity.API.props
 C:\Users\Brayan\source\repos\InfoCity.API\obj\Debug\net5.0\staticwebassets\msbuild.buildTransitive.InfoCity.API.props
-C:\Users\Brayan\source\repos\InfoCity.API\bin\Debug\net5.0\citación-imágenes-y-figuras.pdf
 C:\Users\Brayan\source\repos\InfoCity.API\bin\Debug\net5.0\CloudinaryDotNet.dll
 C:\Users\Brayan\source\repos\InfoCity.API\bin\Debug\net5.0\Newtonsoft.Json.dll
