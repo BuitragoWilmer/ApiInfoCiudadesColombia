@@ -1,5 +1,6 @@
 ﻿using InfoCity.API.Model;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using System.Collections;
@@ -61,6 +62,65 @@ namespace InfoCity.API.Controllers
                 cityName = cityName,
                 pointInterest = finalPointInterest.Id
             }, finalPointInterest);
+        }
+
+        [HttpPut("{pointInterestId}")]
+        public ActionResult UpdatePointInterest(
+            string cityName, int pointInterestId,
+            PointInterestUpdateDto pointInterest)
+        {
+            var city = CitiesDataStore.current.Cities.FirstOrDefault(x => x.Name == cityName);
+            if (city == null)
+            {
+                return NotFound();
+            }
+            var pointInterestStore = city.PointInterests.FirstOrDefault(x => x.Id == pointInterestId);
+            if (pointInterestStore == null)
+            {
+                return NotFound();
+            }
+            pointInterestStore.Name = pointInterest.Name;
+            pointInterestStore.Description = pointInterest.Description;
+
+            return NoContent();
+        }
+
+
+        [HttpPatch("{pointInterestId}")]
+        public ActionResult PartiallyUpdatePointInterest(
+            string cityName, int pointInterestId,
+            JsonPatchDocument<PointInterestUpdateDto> patchDocument)
+        {
+            var city = CitiesDataStore.current.Cities.FirstOrDefault(x => x.Name == cityName);
+            if (city == null)
+            {
+                return NotFound();
+            }
+            var pointInterestStore = city.PointInterests.FirstOrDefault(x => x.Id == pointInterestId);
+            if (pointInterestStore == null)
+            {
+                return NotFound();
+            }
+            //Crea un objeto del tipo que recibe para poder hacerle el parcializado
+            PointInterestUpdateDto pointInterestPatch = new PointInterestUpdateDto()
+            {
+                Name = pointInterestStore.Name,
+                Description = pointInterestStore.Description
+            };
+            //Realiza el cambio al objeto 
+            patchDocument.ApplyTo(pointInterestPatch, ModelState);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            if(!TryValidateModel(pointInterestPatch))
+            {
+                return BadRequest(ModelState);
+            }
+            pointInterestStore.Name = pointInterestPatch.Name;
+            pointInterestStore.Description = pointInterestPatch.Description;
+
+            return NoContent();
         }
     }
 }
