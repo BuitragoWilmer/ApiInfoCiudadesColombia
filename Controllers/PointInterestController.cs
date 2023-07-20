@@ -1,8 +1,11 @@
 ﻿using InfoCity.API.Model;
+using InfoCity.API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,15 +16,33 @@ namespace InfoCity.API.Controllers
     [ApiController]
     public class PointInterestController : ControllerBase
     {
+        private readonly ILogger<PointInterestController> logger;
+        private readonly IMailService mailservice;
+
+        public PointInterestController(ILogger<PointInterestController> logger, IMailService mailservice)
+        {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.mailservice = mailservice ?? throw new ArgumentNullException(nameof(mailservice)); ;
+        }
+
         [HttpGet]
         public ActionResult<IEnumerable<PointInterestDto>> GetPointsInterest(string cityName)
         {
-            var city = CitiesDataStore.current.Cities.FirstOrDefault(x => x.Name == cityName);
-            if(city == null)
+            try
+            {  
+                var city = CitiesDataStore.current.Cities.FirstOrDefault(x => x.Name == cityName);
+                if (city == null)
+                {
+                    logger.LogInformation($"La ciudad con nombre {cityName} no se encuentra en la base de datos, por favor crearla y registre los puntos de interes.");
+                    return NotFound();
+                }
+                return Ok(city.PointInterests);
+            }catch (Exception ex)
             {
-                return NotFound();
+                logger.LogCritical($"Excepcion causada en GetPointInterest con el parametro {cityName}", ex);
+                return StatusCode(500, "Se ha generado un problema con la petición, intentelo más tarde.");
             }
-            return Ok(city.PointInterests);
+            
         }
 
         [HttpGet("{pointInterest}", Name = "GetPointInterest")]
@@ -120,6 +141,27 @@ namespace InfoCity.API.Controllers
             pointInterestStore.Name = pointInterestPatch.Name;
             pointInterestStore.Description = pointInterestPatch.Description;
 
+            return NoContent();
+        }
+
+        [HttpDelete("{pointInterestId}")]
+        public ActionResult DeletePointInterest(string cityName, int pointInterestId)
+        {
+            var city = CitiesDataStore.current.Cities.FirstOrDefault(x => x.Name == cityName);
+            if (city == null)
+            {
+                return NotFound();
+            }
+            var pointInterestStore = city.PointInterests.FirstOrDefault(x => x.Id == pointInterestId);
+            if (pointInterestStore == null)
+            {
+                return NotFound();
+            }
+            city.PointInterests.Remove(pointInterestStore);
+            mailservice.Send(
+                    "Punto de interes eliminado",
+                    $"punto de interes {pointInterestStore.Name} con id {pointInterestId}"
+                );
             return NoContent();
         }
     }
