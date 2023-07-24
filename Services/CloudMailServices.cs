@@ -1,11 +1,18 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 
 namespace InfoCity.API.Services
 {
     public class CloudMailServices : IMailService
     {
-        private string mailOrigin = "admin@gmail.com";
-        private string mailDestiny = "user@gmail.com";
+        private readonly string mailOrigin = string.Empty;
+        private readonly string mailDestiny = string.Empty;
+
+        public CloudMailServices(IConfiguration configuration)
+        {
+            this.mailOrigin = configuration["mailSettings:mailFromAddress"];
+            this.mailDestiny = configuration["mailSettings:mailToAddress"];
+        }
 
         public void Send(string subject, string message)
         {

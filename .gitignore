@@ -1,2 +1,6 @@
 *.pdf
 logs/
+*.db
+*.db-shm
+*.db-wal
+appsettings.json

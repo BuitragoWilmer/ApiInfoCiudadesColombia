@@ -18,11 +18,14 @@ namespace InfoCity.API.Controllers
     {
         private readonly ILogger<PointInterestController> logger;
         private readonly IMailService mailservice;
+        private readonly CitiesDataStore citiesData;
 
-        public PointInterestController(ILogger<PointInterestController> logger, IMailService mailservice)
+        public PointInterestController(ILogger<PointInterestController> logger, IMailService mailservice, CitiesDataStore citiesData)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.mailservice = mailservice ?? throw new ArgumentNullException(nameof(mailservice)); ;
+            this.mailservice = mailservice ?? throw new ArgumentNullException(nameof(mailservice));
+            this.citiesData = citiesData ?? throw new ArgumentNullException(nameof(citiesData));
+            ;
         }
 
         [HttpGet]
@@ -30,7 +33,7 @@ namespace InfoCity.API.Controllers
         {
             try
             {  
-                var city = CitiesDataStore.current.Cities.FirstOrDefault(x => x.Name == cityName);
+                var city = citiesData.Cities.FirstOrDefault(x => x.Name == cityName);
                 if (city == null)
                 {
                     logger.LogInformation($"La ciudad con nombre {cityName} no se encuentra en la base de datos, por favor crearla y registre los puntos de interes.");
@@ -47,7 +50,7 @@ namespace InfoCity.API.Controllers
 
         [HttpGet("{pointInterest}", Name = "GetPointInterest")]
         public ActionResult<PointInterestDto> GetPointInterest(string cityName, int pointInterest) {
-            var city = CitiesDataStore.current.Cities.FirstOrDefault(x => x.Name == cityName);
+            var city = citiesData.Cities.FirstOrDefault(x => x.Name == cityName);
             if (city == null)
             {
                 return NotFound();
@@ -65,12 +68,12 @@ namespace InfoCity.API.Controllers
             string cityName,
             PointInterestCreationDto pointInterest)
         {
-            var city = CitiesDataStore.current.Cities.FirstOrDefault(x => x.Name == cityName);
+            var city = citiesData.Cities.FirstOrDefault(x => x.Name == cityName);
             if (city == null)
             {
                 return NotFound();
             }
-            var maxPointInterestId = CitiesDataStore.current.Cities.SelectMany(x=>x.PointInterests).Max(x=>x.Id);
+            var maxPointInterestId = citiesData.Cities.SelectMany(x=>x.PointInterests).Max(x=>x.Id);
             var finalPointInterest = new PointInterestDto()
             {
                 Id = ++maxPointInterestId,
@@ -90,7 +93,7 @@ namespace InfoCity.API.Controllers
             string cityName, int pointInterestId,
             PointInterestUpdateDto pointInterest)
         {
-            var city = CitiesDataStore.current.Cities.FirstOrDefault(x => x.Name == cityName);
+            var city = citiesData.Cities.FirstOrDefault(x => x.Name == cityName);
             if (city == null)
             {
                 return NotFound();
@@ -112,7 +115,7 @@ namespace InfoCity.API.Controllers
             string cityName, int pointInterestId,
             JsonPatchDocument<PointInterestUpdateDto> patchDocument)
         {
-            var city = CitiesDataStore.current.Cities.FirstOrDefault(x => x.Name == cityName);
+            var city = citiesData.Cities.FirstOrDefault(x => x.Name == cityName);
             if (city == null)
             {
                 return NotFound();
@@ -147,7 +150,7 @@ namespace InfoCity.API.Controllers
         [HttpDelete("{pointInterestId}")]
         public ActionResult DeletePointInterest(string cityName, int pointInterestId)
         {
-            var city = CitiesDataStore.current.Cities.FirstOrDefault(x => x.Name == cityName);
+            var city = citiesData.Cities.FirstOrDefault(x => x.Name == cityName);
             if (city == null)
             {
                 return NotFound();

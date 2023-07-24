@@ -6,6 +6,7 @@ using CloudinaryDotNet.Actions;
 using System.IO;
 using System.Net;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Configuration;
 
 namespace InfoCity.API.Controllers
 {
@@ -15,19 +16,21 @@ namespace InfoCity.API.Controllers
     public class FilesController : ControllerBase
     {
         private readonly FileExtensionContentTypeProvider _fileExtension;
+        private readonly IConfiguration _configuration;
 
-        public FilesController(FileExtensionContentTypeProvider file)
+        public FilesController(FileExtensionContentTypeProvider file, IConfiguration configuration)
         {
             _fileExtension = file
             ?? throw new ArgumentNullException(nameof(file));
+            _configuration = configuration;
         }
 
             [HttpGet("{assetid}")]
         public ActionResult GetFile(string assetid)
         {
 
-            Cloudinary cloudinary = new Cloudinary("cloudinary://959377429313512:9lb_08in6JRZ9Bo7KT5BZFOlXd4@dvejlclzb");
-            var result = cloudinary.GetResourceByAssetId(assetid);
+            Cloudinary cloudinary = new Cloudinary(_configuration["ConnectionCludinaryStrings:key"]);
+            var result = cloudinary.GetResourceByAssetId("993e865d7fa0c38e19eaa4c4b0ed495f");
             Stream remoteStream = null;
             WebResponse response = null;
             if (result.StatusCode == System.Net.HttpStatusCode.BadRequest){
