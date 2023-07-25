@@ -48,7 +48,9 @@ namespace InfoCity.API
 #endif
             services.AddSingleton<CitiesDataStore>();
             services.AddSingleton<FileExtensionContentTypeProvider>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddDbContext<CityInfoContext>(dbContextOptions => dbContextOptions.UseSqlite(Configuration["ConnectionStrings:CityInfoDbConnectionString"]));
+            services.AddScoped<ICityInfoRepository,CityInfoRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -9,6 +9,10 @@ namespace InfoCity.API.Model
         public string Name { get; set; }=string.Empty;
         public string Description { get; set; }
 
+        public int numberPointsInterest {
+            get {  return PointInterests.Count; }
+        }
+
         public ICollection<PointInterestDto> PointInterests { get; set; }=
             new List<PointInterestDto>();
     }
