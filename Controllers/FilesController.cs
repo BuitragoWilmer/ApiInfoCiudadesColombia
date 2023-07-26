@@ -7,11 +7,13 @@ using System.IO;
 using System.Net;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InfoCity.API.Controllers
 {
 
     [Route("api/archivos")]
+    [Authorize]
     [ApiController]
     public class FilesController : ControllerBase
     {

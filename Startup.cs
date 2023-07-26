@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using InfoCity.API.DbContexts;
 using InfoCity.API.Services;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -43,9 +45,32 @@ namespace InfoCity.API
             });
             #if DEBUG
                 services.AddTransient<IMailService,LocalMailService>();
-            #else
+#else
                 services.AddTransient<IMailService,CloudMailServices>();
 #endif
+            services.AddAuthentication("Bearer").AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = Configuration["Authentication:Issuer"],
+                    ValidAudience = Configuration["Authentication:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration["Authentication:SecretForKey"]))
+                };
+            }
+            );
+
+            ///Agregar politica de datos
+            services.AddAuthorization(option =>
+            {
+                option.AddPolicy("SoloBogota", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireClaim("city", "1");
+                });
+            });
             services.AddSingleton<CitiesDataStore>();
             services.AddSingleton<FileExtensionContentTypeProvider>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -68,7 +93,9 @@ namespace InfoCity.API
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthentication();
+
+            app.UseAuthorization();           
 
             app.UseEndpoints(endpoints =>
             {

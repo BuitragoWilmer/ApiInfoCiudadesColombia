@@ -83,6 +83,12 @@ namespace InfoCity.API.Services
             return await Context.cities.AnyAsync(x => x.Name == cityName);
         }
 
+        public async Task<bool> CityNameMatchesCityId(string cityName, int cityId)
+        {
+            return await Context.cities.AnyAsync(x => x.Name == cityName && x.CityId == cityId);
+        }
+
+
         public async Task AddPointInterestAsync(string cityName, PointOfInterest pointOfInterest)
         {
             var city = await GetCityAsync(cityName, false);

@@ -2,6 +2,7 @@
 using InfoCity.API.Entities;
 using InfoCity.API.Model;
 using InfoCity.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 namespace InfoCity.API.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/ciudad")]
     public class CityController: ControllerBase
     {

@@ -2,6 +2,7 @@
 using InfoCity.API.Entities;
 using InfoCity.API.Model;
 using InfoCity.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,7 @@ using System.Threading.Tasks;
 namespace InfoCity.API.Controllers
 {
     [Route("api/ciudad/{cityName}/puntosdeinteres")]
+    [Authorize(Policy = "SoloBogota")]
     [ApiController]
     public class PointInterestController : ControllerBase
     {
@@ -39,9 +41,16 @@ namespace InfoCity.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PointInterestDto>>> GetPointsInterest(string cityName)
         {
-            try
-            
+            try           
             {
+                //Obtiene el valor de un parametro del token de autenticacion
+                var cityId = User.Claims.FirstOrDefault(x=>x.Type == "city")?.Value;
+                int.TryParse(cityId, out var codCity);
+                if(!await citiesDataRepository.CityNameMatchesCityId(cityName, codCity))
+                {
+                    return Forbid();
+                }
+
                 if (!await citiesDataRepository.CityExistsAsync(cityName))
                 {
                     logger.LogInformation($"La ciudad con nombre {cityName} no se encuentra en la base de datos, por favor crearla y registre los puntos de interes.");

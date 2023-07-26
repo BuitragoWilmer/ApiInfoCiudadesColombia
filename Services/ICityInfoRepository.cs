@@ -25,5 +25,7 @@ namespace InfoCity.API.Services
         void DeletePointInterest(PointOfInterest pointOfInterest);
 
         Task<bool> SaveChangesAsync();
+
+        Task<bool> CityNameMatchesCityId(string cityName, int cityId);
     }
 }
