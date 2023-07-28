@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace InfoCity.API.Entities
 {
+#pragma warning disable CS1591
+    
     public class City
     {
         [Key]
@@ -16,7 +19,8 @@ namespace InfoCity.API.Entities
         public string Name { get; set; }
 
         [MaxLength(200)]
-        public string? Description { get; set; }
+        [AllowNull]
+        public string Description { get; set; }
 
 
         public ICollection<PointOfInterest> PointInterests { get; set; } =
@@ -27,4 +31,6 @@ namespace InfoCity.API.Entities
             Name = name;
         }
     }
+
+#pragma warning restore CS1591
 }

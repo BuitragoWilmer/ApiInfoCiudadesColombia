@@ -10,13 +10,13 @@ namespace InfoCity.API.Services
         Task<IEnumerable<City>> GetCitiesAsync();
 
         Task<(IEnumerable<City>, PaginationMetadata)> 
-            GetCitiesAsync(string? cityName, string? searchQuery, int pageNumber, int pageSize);
+            GetCitiesAsync(string cityName, string searchQuery, int pageNumber, int pageSize);
 
-        Task<City?> GetCityAsync(string cityName, bool includePointInterest);
+        Task<City> GetCityAsync(string cityName, bool includePointInterest);
 
         Task<IEnumerable<PointOfInterest>> GetPointsOfInterestsForCityAsync(string cityName);
 
-        Task<PointOfInterest?> GetPointOfInterestsForCityAsync(string cityName, int pointInterestId);
+        Task<PointOfInterest> GetPointOfInterestsForCityAsync(string cityName, int pointInterestId);
 
         Task<bool> CityExistsAsync(string cityName);
 

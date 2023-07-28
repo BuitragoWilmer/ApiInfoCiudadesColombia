@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace InfoCity.API.Entities
 {
@@ -13,10 +14,12 @@ namespace InfoCity.API.Entities
         [MaxLength(50)]
         public string Name { get; set; }
 
-        public string? Description { get; set; }
+        [AllowNull]
+        public string Description { get; set; }
 
+        [AllowNull]
         [ForeignKey("CityId")]
-        public City? City { get; set; }
+        public City City { get; set; }
 
         public int CityId { get; set; }
 

@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>InfoCity.API</name>
+    </assembly>
+    <members>
+        <member name="M:InfoCity.API.Controllers.CityController.GetCitiesWithPointInterest(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            Obtiene todas las ciudad permitiendo paginación
+            </summary>
+            <param name="name">Filro por nombre de la ciudad</param>
+            <param name="searchQuery">Parametro para busqueda en los campos de descripcion o Nombre</param>
+            <param name="pageNumber">Numero de paginas para la paginacion</param>
+            <param name="pageSize">Tamaño de la pagina</param>
+            <returns>Lista de ciudades</returns>
+        </member>
+        <member name="M:InfoCity.API.Controllers.CityController.GetCities(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            Obtiene todas las ciudad permitiendo paginación
+            </summary>
+            <param name="name">Filtro por nombre de la ciudad</param>
+            <param name="searchQuery">Parametro para busqueda en los campos de descripcion o Nombre</param>
+            <param name="pageNumber">Numero de paginas para la paginacion</param>
+            <param name="pageSize">Tamaño de la pagina</param>
+            <returns>Lista de ciudades</returns>
+        </member>
+        <member name="M:InfoCity.API.Controllers.CityController.GetCity(System.String,System.Boolean)">
+            <summary>
+            Obtiene una ciudad especifica por su nombre
+            </summary>
+            <param name="nameCity">Nombre de la ciudad</param>
+            <param name="includePointInteres">Si se requiere que se incluyan los puntos de interes asociados a la ciudad</param>
+            <returns>Ciudad</returns>
+            <response code="200">Devuelve la ciudad dependiendo si se requiere con puntos de interes o no</response>
+            <response code="404">No se encontro la ciudad en la base de datos</response>
+        </member>
+        <member name="M:InfoCity.API.Controllers.PointInterestController.PartiallyUpdatePointInterest(System.String,System.Int32,Microsoft.AspNetCore.JsonPatch.JsonPatchDocument{InfoCity.API.Model.PointInterestUpdateDto})">
+             <summary>
+             Actualizacion parcial de un punto de interes
+             </summary>
+             <param name="cityName">Nombre de la ciudad</param>
+             <param name="pointInterestId">Identificador del punto de interes</param>
+             <param name="patchDocument">El set de operaciones para aplicar al punto de interes</param>
+             <returns>Punto de interes</returns>
+             <remarks>
+             Ejemplo de peticion(Modificar la descripcion del **punto de interes**) :
+            
+                PATCH/city/name/puntosdeinteres
+                [
+            	    { 
+            	    	"op":"replace",
+                		"path": "/description", 
+            		    "value": "new description" 
+                    } 
+                ] 
+            
+            
+             </remarks>
+        </member>
+        <member name="T:InfoCity.API.Model.CityWithoutPointInterestDto">
+            <summary>
+            DTO para una ciudad que no requiera puntos de interes
+            </summary>
+        </member>
+        <member name="P:InfoCity.API.Model.CityWithoutPointInterestDto.Id">
+            <summary>
+            El id de la ciudad
+            </summary>
+        </member>
+        <member name="P:InfoCity.API.Model.CityWithoutPointInterestDto.Name">
+            <summary>
+            Nombre de la ciudad
+            </summary>
+        </member>
+        <member name="P:InfoCity.API.Model.CityWithoutPointInterestDto.Description">
+            <summary>
+            Descripcion de la ciudad
+            </summary>
+        </member>
+        <member name="T:InfoCity.API.Model.PointInterestUpdateDto">
+            <summary>
+            DTO para actualizar un punto de interes
+            </summary>
+        </member>
+        <member name="P:InfoCity.API.Model.PointInterestUpdateDto.Name">
+            <summary>
+            Nombre del punto de interes
+            </summary>
+        </member>
+        <member name="P:InfoCity.API.Model.PointInterestUpdateDto.Description">
+            <summary>
+            Breve descripcion del punto de interes
+            </summary>
+        </member>
+        <member name="M:InfoCity.API.Services.CityInfoRepository.GetCitiesAsync(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            Metodo de filtrado
+            y busquedad
+            </summary>
+        </member>
+    </members>
+</doc>

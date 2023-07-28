@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace InfoCity.API.Model
 {
@@ -9,6 +10,7 @@ namespace InfoCity.API.Model
         public string Name { get; set; } = string.Empty;
 
         [MaxLength(200)]
-        public string? Description { get; set; }
+        [AllowNull]
+        public string Description { get; set; }
     }
 }

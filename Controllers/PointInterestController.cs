@@ -16,8 +16,11 @@ using System.Threading.Tasks;
 
 namespace InfoCity.API.Controllers
 {
-    [Route("api/ciudad/{cityName}/puntosdeinteres")]
+    [Route("api/v{version:apiVersion}/ciudad/{cityName}/puntosdeinteres")]
     [Authorize(Policy = "SoloBogota")]
+    [ApiVersion("2.0")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ApiExplorerSettings(GroupName = "InfoCityAPI")]
     [ApiController]
     public class PointInterestController : ControllerBase
     {
@@ -38,6 +41,7 @@ namespace InfoCity.API.Controllers
             this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PointInterestDto>>> GetPointsInterest(string cityName)
         {
@@ -67,6 +71,9 @@ namespace InfoCity.API.Controllers
         }
 
         [HttpGet("{pointInterest}", Name = "GetPointInterest")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        [ProducesDefaultResponseType]
         public async Task<ActionResult<PointInterestDto>> GetPointInterest(string cityName, int pointInterest) {
             try
             {
@@ -89,7 +96,11 @@ namespace InfoCity.API.Controllers
             }
         }
 
+
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesDefaultResponseType]
+        [Consumes("application/json", "application/xml")]
         public async Task<ActionResult<PointInterestDto>> CreatePointInterest(
             string cityName,
             PointInterestCreationDto pointInterest)
@@ -114,6 +125,8 @@ namespace InfoCity.API.Controllers
         }
 
         [HttpPut("{pointInterestId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesDefaultResponseType]
         public async Task<ActionResult> UpdatePointInterest(
             string cityName, int pointInterestId,
             PointInterestUpdateDto pointInterest)
@@ -135,8 +148,31 @@ namespace InfoCity.API.Controllers
             return NoContent();
         }
 
-
+        /// <summary>
+        /// Actualizacion parcial de un punto de interes
+        /// </summary>
+        /// <param name="cityName">Nombre de la ciudad</param>
+        /// <param name="pointInterestId">Identificador del punto de interes</param>
+        /// <param name="patchDocument">El set de operaciones para aplicar al punto de interes</param>
+        /// <returns>Punto de interes</returns>
+        /// <remarks>
+        /// Ejemplo de peticion(Modificar la descripcion del **punto de interes**) :
+        ///
+        ///    PATCH/city/name/puntosdeinteres
+        ///    [
+        ///	    { 
+        ///	    	"op":"replace",
+        ///    		"path": "/description", 
+        ///		    "value": "new description" 
+        ///        } 
+        ///    ] 
+        ///
+        ///
+        /// </remarks>
         [HttpPatch("{pointInterestId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
         public async Task<ActionResult> PartiallyUpdatePointInterest(
             string cityName, int pointInterestId,
             JsonPatchDocument<PointInterestUpdateDto> patchDocument)
@@ -152,11 +188,11 @@ namespace InfoCity.API.Controllers
                 return NotFound();
             }
             //Crea un objeto del tipo que recibe para poder hacerle el parcializado
-            ///PointInterestUpdateDto pointInterestPatch = new PointInterestUpdateDto()
-            ///{
-            ///    Name = pointInterestStore.Name,
-            ///    Description = pointInterestStore.Description
-            ///};
+            //PointInterestUpdateDto pointInterestPatch = new PointInterestUpdateDto()
+            //{
+            //    Name = pointInterestStore.Name,
+            //    Description = pointInterestStore.Description
+            //};
 
             PointInterestUpdateDto pointInterestPatch = mapper.Map<PointInterestUpdateDto>(pointInterestStore);
 
@@ -177,7 +213,10 @@ namespace InfoCity.API.Controllers
             return NoContent();
         }
 
+
         [HttpDelete("{pointInterestId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesDefaultResponseType]
         public async Task<ActionResult> DeletePointInterest(string cityName, int pointInterestId)
         {
             if (!await citiesDataRepository.CityExistsAsync(cityName))

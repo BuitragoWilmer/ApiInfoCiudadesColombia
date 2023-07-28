@@ -15,6 +15,8 @@ namespace InfoCity.API.Controllers
     [Route("api/archivos")]
     [Authorize]
     [ApiController]
+    //Permite separar las especificaciones de cada API
+    [ApiExplorerSettings(GroupName = "DowloadPictures.API")]
     public class FilesController : ControllerBase
     {
         private readonly FileExtensionContentTypeProvider _fileExtension;

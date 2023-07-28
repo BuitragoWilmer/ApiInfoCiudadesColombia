@@ -27,7 +27,7 @@ namespace InfoCity.API.Services
         /// Metodo de filtrado
         /// y busquedad
         /// </summary>
-        public async Task<(IEnumerable<City>, PaginationMetadata)> GetCitiesAsync(string? name, string? searchQuery, int pageNumber , int pageSize)
+        public async Task<(IEnumerable<City>, PaginationMetadata)> GetCitiesAsync(string name, string searchQuery, int pageNumber , int pageSize)
         {
             //Coleccion de busqueda
             var cities = Context.cities as IQueryable<City>;

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -11,6 +12,7 @@ using System.Text;
 namespace InfoCity.API.Controllers
 {
     [Route("api/autenticacion")]
+    [Consumes("application/json", "application/xml")] 
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
@@ -22,6 +24,9 @@ namespace InfoCity.API.Controllers
         }
 
         [HttpPost("autenticar")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesDefaultResponseType]
         public ActionResult<string> Authenticate(AuthenticationRequestBody requestBody)
         {
             //Paso 1: Validar las credenciales
@@ -31,17 +36,17 @@ namespace InfoCity.API.Controllers
                 return Unauthorized();    
             }
             //Paso 2: Crear token
-            ///Llave en binario
+            //Llave en binario
             var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["Authentication:SecretForKey"]));
-            ///Firma
+            //Firma
             var signingCredential = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            ///Encabezado
+            //Encabezado
             var claimsToken = new List<Claim>();
             claimsToken.Add(new Claim("sub", user.UserId.ToString()));
             claimsToken.Add(new Claim("given_name", user.FirstName));
             claimsToken.Add(new Claim("family_name", user.LastName));
             claimsToken.Add(new Claim("city", user.CityId.ToString()));
-            ///Generar token
+            //Generar token
             var jwtSecurityToken = new JwtSecurityToken(
                     configuration["Authentication:Issuer"],
                     configuration["Authentication:Audience"],
@@ -63,8 +68,11 @@ namespace InfoCity.API.Controllers
 
         public class AuthenticationRequestBody
         {
-            public string? Username { get; set; }
-            public string? Password { get; set; }
+            [AllowNull]
+            public string Username { get; set; }
+
+            [AllowNull]
+            public string Password { get; set; }
         }
 
         public class CityInfoUser

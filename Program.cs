@@ -44,7 +44,7 @@ namespace InfoCity.API
             {
                 webBuilder.UseStartup<Startup>();
             }).UseSerilog();
-        ///Permite la configuracion del log en la consola
+        //Permite la configuracion del log en la consola
         //.ConfigureLogging(log => { 
         //        log.ClearProviders();
         //        log.AddJsonConsole();
